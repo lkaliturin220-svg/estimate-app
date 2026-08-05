@@ -1,0 +1,8 @@
+django>=4.2,<5.1
+djangorestframework>=3.14
+django-cors-headers>=4.3
+psycopg2-binary>=2.9
+gunicorn>=21,<23
+django-ratelimit>=4.1
+beautifulsoup4>=4.12
+requests>=2.31
