@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f97316">
+    <link rel="manifest" href="/manifest.json">
+    <title>Смета Стройки</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- login screen -->
+        <div id="screen-login" class="screen active">
+            <div class="login-container">
+                <h1>🏗️ Смета Стройки</h1>
+                <p class="subtitle">Калькулятор строительных работ</p>
+                
+                <div class="login-tabs">
+                    <button class="tab active" data-tab="telegram">Telegram</button>
+                    <button class="tab" data-tab="password">Пароль</button>
+                </div>
+
+                <!-- Telegram Login -->
+                <div id="tab-telegram" class="tab-content active">
+                    <script async src="https://telegram.org/js/telegram-widget.js?22"
+                        data-telegram-login="estimate_bot"
+                        data-size="large"
+                        data-auth-url="/api/auth/telegram/"
+                        data-request-access="write">
+                    </script>
+                    <p class="hint">Один тап — и вы в системе</p>
+                </div>
+
+                <!-- Password Login -->
+                <div id="tab-password" class="tab-content">
+                    <form id="login-form">
+                        <input type="text" id="login-username" placeholder="Логин" required>
+                        <input type="password" id="login-password" placeholder="Пароль" required>
+                        <button type="submit" class="btn-primary">Войти</button>
+                    </form>
+                    <p class="hint">Нет аккаунта? <a href="#" id="show-register">Зарегистрироваться</a></p>
+                </div>
+
+                <!-- Register -->
+                <div id="tab-register" class="tab-content" style="display:none">
+                    <form id="register-form">
+                        <input type="text" id="reg-username" placeholder="Логин" required>
+                        <input type="password" id="reg-password" placeholder="Пароль" required>
+                        <button type="submit" class="btn-primary">Создать аккаунт</button>
+                    </form>
+                    <p class="hint">Уже есть? <a href="#" id="show-login">Войти</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- estimates list screen -->
+        <div id="screen-estimates" class="screen">
+            <nav class="navbar">
+                <h2>🏗️ Мои сметы</h2>
+                <div class="nav-actions">
+                    <button id="btn-theme" class="btn-icon" title="Тема">🌓</button>
+                    <button id="btn-logout" class="btn-icon" title="Выйти">🚪</button>
+                </div>
+            </nav>
+            <div class="app-layout">
+                <aside class="sidebar">
+                    <button id="btn-new-estimate" class="btn-primary full">+ Новая смета</button>
+                    <div id="estimates-list" class="list">
+                        <p class="empty">Загрузка...</p>
+                    </div>
+                </aside>
+                <main class="main-area" id="calculator-area">
+                    <p class="empty">Выберите смету или создайте новую</p>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/estimates.js"></script>
+    <script src="/js/calculator.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>
