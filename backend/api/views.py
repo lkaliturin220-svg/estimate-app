@@ -164,13 +164,18 @@ def estimates_view(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def estimate_detail_view(request, pk):
     try:
         estimate = Estimate.objects.prefetch_related('lines__work_item').get(pk=pk, user=request.user)
     except Estimate.DoesNotExist:
         return Response({'error': 'Смета не найдена.'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'DELETE':
+        estimate.delete()
+        return Response({'detail': 'Смета удалена.'})
+    
     serializer = EstimateDetailSerializer(estimate)
     return Response(serializer.data)
 
