@@ -21,6 +21,18 @@ function toggleTheme() {
     localStorage.setItem('theme', next);
 }
 
+// Show/hide password
+function togglePW(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        btn.textContent = '👁';
+    }
+}
+
 // Init
 document.addEventListener('DOMContentLoaded', () => {
     // Theme

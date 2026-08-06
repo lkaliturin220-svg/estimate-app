@@ -17,6 +17,8 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       DEBUG: "0"
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+    volumes:
+      - staticfiles:/app/staticfiles
     depends_on:
       - db
     restart: unless-stopped
@@ -26,6 +28,10 @@ services:
     volumes:
       - ./frontend:/usr/share/nginx/html:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - staticfiles:/static:ro
     ports:
       - "8080:80"
     restart: unless-stopped
+
+volumes:
+  staticfiles:

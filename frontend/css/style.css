@@ -69,6 +69,15 @@ body {
 .hint a { color: var(--accent); text-decoration: none; }
 
 /* ===== Forms ===== */
+.pw-wrap { position: relative; margin-bottom: 12px; }
+.pw-wrap input { margin-bottom: 0; padding-right: 44px; }
+.pw-toggle {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; font-size: 20px; cursor: pointer;
+    padding: 4px; line-height: 1; opacity: 0.6;
+}
+.pw-toggle:hover { opacity: 1; }
+
 input[type="text"], input[type="password"], input[type="number"] {
     width: 100%;
     padding: 12px 16px;

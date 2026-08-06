@@ -38,7 +38,10 @@
                 <div id="tab-password" class="tab-content">
                     <form id="login-form">
                         <input type="text" id="login-username" placeholder="Логин" required>
-                        <input type="password" id="login-password" placeholder="Пароль" required>
+                        <div class="pw-wrap">
+                            <input type="password" id="login-password" placeholder="Пароль" required>
+                            <button type="button" class="pw-toggle" onclick="togglePW('login-password', this)">👁</button>
+                        </div>
                         <button type="submit" class="btn-primary">Войти</button>
                     </form>
                     <p class="hint">Нет аккаунта? <a href="#" id="show-register">Зарегистрироваться</a></p>
@@ -48,8 +51,14 @@
                 <div id="tab-register" class="tab-content" style="display:none">
                     <form id="register-form">
                         <input type="text" id="reg-username" placeholder="Логин" required minlength="3">
-                        <input type="password" id="reg-password" placeholder="Пароль (мин. 6 символов, буквы+цифры)" required minlength="6">
-                        <input type="password" id="reg-password2" placeholder="Повторите пароль" required minlength="6">
+                        <div class="pw-wrap">
+                            <input type="password" id="reg-password" placeholder="Пароль (мин. 6 символов, буквы+цифры)" required minlength="6">
+                            <button type="button" class="pw-toggle" onclick="togglePW('reg-password', this)">👁</button>
+                        </div>
+                        <div class="pw-wrap">
+                            <input type="password" id="reg-password2" placeholder="Повторите пароль" required minlength="6">
+                            <button type="button" class="pw-toggle" onclick="togglePW('reg-password2', this)">👁</button>
+                        </div>
                         <p id="reg-error" style="color:var(--danger);font-size:13px;display:none"></p>
                         <button type="submit" class="btn-primary">Создать аккаунт</button>
                     </form>
@@ -63,6 +72,7 @@
             <nav class="navbar">
                 <h2>🏗️ Мои сметы</h2>
                 <div class="nav-actions">
+                    <a href="/admin/" target="_blank" class="btn-icon" title="Админка">⚙️</a>
                     <button id="btn-theme" class="btn-icon" title="Тема">🌓</button>
                     <button id="btn-logout" class="btn-icon" title="Выйти">🚪</button>
                 </div>
