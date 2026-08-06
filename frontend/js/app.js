@@ -81,7 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-new-estimate').addEventListener('click', createEstimate);
 
     // Check if already logged in (try loading estimates)
-    get('/api/estimates/')
+    // First get CSRF cookie
+    fetch('/api/auth/csrf/', { credentials: 'same-origin' })
+        .then(() => get('/api/estimates/'))
         .then(() => showScreen('estimates'))
         .catch(() => showScreen('login'));
 });

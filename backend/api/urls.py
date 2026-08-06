@@ -8,6 +8,7 @@ urlpatterns = [
     path('auth/logout/', views.logout_view, name='auth-logout'),
     path('auth/telegram/', views.telegram_auth_view, name='auth-telegram'),
     path('auth/me/', views.me_view, name='auth-me'),
+    path('auth/csrf/', views.csrf_view, name='auth-csrf'),
 
     path('categories/', views.categories_view, name='categories'),
     path('work-items/', views.work_items_view, name='work-items'),
