@@ -84,12 +84,14 @@ async function addLine() {
     
     const opt = sel.selectedOptions[0];
     const price = parseFloat(opt.dataset.price) || 0;
+    const unit = opt.dataset.unit || 'ед.';
     
     try {
         await post(`/api/estimates/${currentEstimate.id}/lines/`, {
-            work_item_id: Number(sel.value),
+            work_item: Number(sel.value),
             price,
             quantity: parseFloat(qty.value) || 1,
+            unit,
         });
         toast('Добавлено');
         await loadCalculator(currentEstimate.id);
@@ -97,16 +99,16 @@ async function addLine() {
 }
 
 async function updateLine(lineId, field, value) {
-    const data = { [field]: parseFloat(value) || 0 };
+    const data = { id: lineId, [field]: parseFloat(value) || 0 };
     try {
-        await patch(`/api/estimates/${currentEstimate.id}/lines/${lineId}/`, data);
+        await patch(`/api/estimates/${currentEstimate.id}/lines/`, data);
         await loadCalculator(currentEstimate.id);
     } catch (e) { toast(e.message, 'error'); }
 }
 
 async function deleteLine(lineId) {
     try {
-        await del(`/api/estimates/${currentEstimate.id}/lines/${lineId}/`);
+        await del(`/api/estimates/${currentEstimate.id}/lines/`, { id: lineId });
         toast('Строка удалена');
         await loadCalculator(currentEstimate.id);
     } catch (e) { toast(e.message, 'error'); }

@@ -33,4 +33,4 @@ async function api(method, path, body = null) {
 const get = (p) => api('GET', p);
 const post = (p, b) => api('POST', p, b);
 const patch = (p, b) => api('PATCH', p, b);
-const del = (p) => api('DELETE', p);
+const del = (p, b) => api('DELETE', p, b);
