@@ -15,4 +15,5 @@ urlpatterns = [
     path('estimates/', views.estimates_view, name='estimates'),
     path('estimates/<int:pk>/', views.estimate_detail_view, name='estimate-detail'),
     path('estimates/<int:estimate_pk>/lines/', views.estimate_lines_view, name='estimate-lines'),
+    path('estimates/<int:estimate_pk>/lines/<int:line_pk>/', views.estimate_line_detail_view, name='estimate-line-detail'),
 ]

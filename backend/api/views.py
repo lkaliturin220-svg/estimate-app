@@ -175,7 +175,7 @@ def estimate_detail_view(request, pk):
     return Response(serializer.data)
 
 
-@api_view(['POST', 'PATCH', 'DELETE'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def estimate_lines_view(request, estimate_pk):
     try:
@@ -183,33 +183,31 @@ def estimate_lines_view(request, estimate_pk):
     except Estimate.DoesNotExist:
         return Response({'error': 'Смета не найдена.'}, status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'POST':
-        serializer = EstimateLineSerializer(data=request.data)
+    serializer = EstimateLineSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer.save(estimate=estimate)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def estimate_line_detail_view(request, estimate_pk, line_pk):
+    try:
+        line = EstimateLine.objects.get(pk=line_pk, estimate__pk=estimate_pk, estimate__user=request.user)
+    except EstimateLine.DoesNotExist:
+        return Response({'error': 'Строка не найдена.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'DELETE':
+        line.delete()
+        return Response({'detail': 'Строка удалена.'})
+
+    if request.method == 'PATCH':
+        serializer = EstimateLineSerializer(line, data=request.data, partial=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save(estimate=estimate)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    if request.method in ('PATCH', 'DELETE'):
-        line_id = request.data.get('id')
-        if not line_id:
-            return Response({'error': 'Не указан id строки.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            line = EstimateLine.objects.get(pk=line_id, estimate=estimate)
-        except EstimateLine.DoesNotExist:
-            return Response({'error': 'Строка не найдена.'}, status=status.HTTP_404_NOT_FOUND)
-
-        if request.method == 'DELETE':
-            line.delete()
-            return Response({'detail': 'Строка удалена.'})
-
-        if request.method == 'PATCH':
-            serializer = EstimateLineSerializer(line, data=request.data, partial=True)
-            if not serializer.is_valid():
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            serializer.save()
-            return Response(serializer.data)
+        serializer.save()
+        return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])

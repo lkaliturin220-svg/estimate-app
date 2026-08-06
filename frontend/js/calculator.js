@@ -99,16 +99,16 @@ async function addLine() {
 }
 
 async function updateLine(lineId, field, value) {
-    const data = { id: lineId, [field]: parseFloat(value) || 0 };
+    const data = { [field]: parseFloat(value) || 0 };
     try {
-        await patch(`/api/estimates/${currentEstimate.id}/lines/`, data);
+        await patch(`/api/estimates/${currentEstimate.id}/lines/${lineId}/`, data);
         await loadCalculator(currentEstimate.id);
     } catch (e) { toast(e.message, 'error'); }
 }
 
 async function deleteLine(lineId) {
     try {
-        await del(`/api/estimates/${currentEstimate.id}/lines/`, { id: lineId });
+        await del(`/api/estimates/${currentEstimate.id}/lines/${lineId}/`);
         toast('Строка удалена');
         await loadCalculator(currentEstimate.id);
     } catch (e) { toast(e.message, 'error'); }
