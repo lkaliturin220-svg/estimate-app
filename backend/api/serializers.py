@@ -7,12 +7,19 @@ User = get_user_model()
 
 
 class RegisterSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=150)
+    username = serializers.CharField(min_length=3, max_length=150)
     password = serializers.CharField(min_length=6, write_only=True)
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError('Пользователь с таким именем уже существует.')
+        return value
+
+    def validate_password(self, value):
+        if not any(c.isalpha() for c in value):
+            raise serializers.ValidationError('Пароль должен содержать хотя бы одну букву.')
+        if not any(c.isdigit() for c in value):
+            raise serializers.ValidationError('Пароль должен содержать хотя бы одну цифру.')
         return value
 
     def create(self, validated_data):

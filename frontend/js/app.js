@@ -66,8 +66,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // Register form
     document.getElementById('register-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const u = document.getElementById('reg-username').value;
+        const u = document.getElementById('reg-username').value.trim();
         const p = document.getElementById('reg-password').value;
+        const p2 = document.getElementById('reg-password2').value;
+        const errEl = document.getElementById('reg-error');
+        
+        // Validate
+        if (u.length < 3) {
+            errEl.textContent = 'Логин должен быть не менее 3 символов';
+            errEl.style.display = 'block';
+            return;
+        }
+        if (p.length < 6) {
+            errEl.textContent = 'Пароль должен быть не менее 6 символов';
+            errEl.style.display = 'block';
+            return;
+        }
+        if (!/[a-zA-Zа-яА-Я]/.test(p)) {
+            errEl.textContent = 'Пароль должен содержать хотя бы одну букву';
+            errEl.style.display = 'block';
+            return;
+        }
+        if (!/[0-9]/.test(p)) {
+            errEl.textContent = 'Пароль должен содержать хотя бы одну цифру';
+            errEl.style.display = 'block';
+            return;
+        }
+        if (p !== p2) {
+            errEl.textContent = 'Пароли не совпадают';
+            errEl.style.display = 'block';
+            return;
+        }
+        errEl.style.display = 'none';
+        
         try {
             await doRegister(u, p);
             showScreen('estimates');

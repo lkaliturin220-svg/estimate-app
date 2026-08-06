@@ -47,8 +47,10 @@
                 <!-- Register -->
                 <div id="tab-register" class="tab-content" style="display:none">
                     <form id="register-form">
-                        <input type="text" id="reg-username" placeholder="Логин" required>
-                        <input type="password" id="reg-password" placeholder="Пароль" required>
+                        <input type="text" id="reg-username" placeholder="Логин" required minlength="3">
+                        <input type="password" id="reg-password" placeholder="Пароль (мин. 6 символов, буквы+цифры)" required minlength="6">
+                        <input type="password" id="reg-password2" placeholder="Повторите пароль" required minlength="6">
+                        <p id="reg-error" style="color:var(--danger);font-size:13px;display:none"></p>
                         <button type="submit" class="btn-primary">Создать аккаунт</button>
                     </form>
                     <p class="hint">Уже есть? <a href="#" id="show-login">Войти</a></p>
