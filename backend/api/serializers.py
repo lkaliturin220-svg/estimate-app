@@ -63,6 +63,7 @@ class EstimateLineSerializer(serializers.ModelSerializer):
     class Meta:
         model = EstimateLine
         fields = ['id', 'estimate', 'work_item', 'work_item_name', 'custom_name', 'unit', 'price', 'quantity', 'total']
+        read_only_fields = ['estimate']  # estimate задаётся через serializer.save(estimate=...)
 
 
 class EstimateListSerializer(serializers.ModelSerializer):
