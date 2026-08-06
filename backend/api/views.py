@@ -42,6 +42,7 @@ def register_view(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     user = serializer.save()
     login(request, user)
+    request.session.save()  # принудительно сохраняем сессию
     return _user_response(user)
 
 
@@ -59,6 +60,7 @@ def login_view(request):
     if user is None:
         return Response({'error': 'Неверное имя пользователя или пароль.'}, status=status.HTTP_401_UNAUTHORIZED)
     login(request, user)
+    request.session.save()  # принудительно сохраняем сессию
     return _user_response(user)
 
 
