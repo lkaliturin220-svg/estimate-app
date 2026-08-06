@@ -4,7 +4,7 @@ from .models import WorkCategory, WorkItem, Estimate, EstimateLine
 
 @admin.register(WorkCategory)
 class WorkCategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'user', 'created_at']
+    list_display = ['name', 'user']
     search_fields = ['name']
     list_filter = ['user']
 
