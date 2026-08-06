@@ -24,7 +24,9 @@ function renderCalculator() {
             <h3>${escHtml(e.name)}</h3>
             <div style="display:flex; gap:8px; margin-top:8px;">
                 <button class="btn-small" onclick="exportPDF()">📄 PDF</button>
-                <button class="btn-danger" onclick="deleteEstimate(${e.id})">🗑 Удалить</button>
+                <button class="btn-small" onclick="exportCSV()">📊 CSV</button>
+                <button class="btn-small" onclick="copyShareLink()">🔗 Поделиться</button>
+                <button class="btn-danger" onclick="deleteEstimate(${e.id})">🗑</button>
             </div>
         </div>
 
@@ -115,3 +117,33 @@ async function deleteLine(lineId) {
 }
 
 function exportPDF() { window.print(); }
+
+function exportCSV() {
+    const e = currentEstimate;
+    const lines = e.lines || [];
+    let csv = 'Работа,Ед.изм,Цена,Количество,Сумма\n';
+    lines.forEach(l => {
+        const total = l.total || l.price * l.quantity || 0;
+        csv += `"${l.work_item_name || l.custom_name || ''}","${l.unit || ''}",${l.price},${l.quantity},${total}\n`;
+    });
+    const total = lines.reduce((s, l) => s + (l.total || l.price * l.quantity || 0), 0);
+    csv += `"","","","ИТОГО:",${total}`;
+    
+    const blob = new Blob(['\uFEFF' + csv], {type: 'text/csv;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${e.name}.csv`;
+    a.click();
+}
+
+async function copyShareLink() {
+    try {
+        const data = await post(`/api/estimates/${currentEstimate.id}/share/`);
+        await navigator.clipboard.writeText(data.url);
+        toast('Ссылка скопирована!');
+    } catch (e) {
+        // Fallback for HTTP
+        const data = await post(`/api/estimates/${currentEstimate.id}/share/`);
+        prompt('Ссылка для шаринга (Ctrl+C):', data.url);
+    }
+}

@@ -20,8 +20,13 @@ function renderEstimatesList() {
     }
     container.innerHTML = estimates.map(e => `
         <div class="list-item${e.id === currentEstimateId ? ' active' : ''}" data-id="${e.id}">
-            <div class="name">${escHtml(e.name)}</div>
-            <div class="meta">${formatDate(e.created_at)} · ${formatPrice(e.total || 0)}</div>
+            <div class="item-row">
+                <div class="item-info" onclick="event.stopPropagation()">
+                    <div class="name">${escHtml(e.name)}</div>
+                    <div class="meta">${formatDate(e.created_at)} · ${formatPrice(e.total || 0)}</div>
+                </div>
+                <button class="btn-icon-sm" onclick="event.stopPropagation();duplicateEstimate(${e.id})" title="Дублировать">📋</button>
+            </div>
         </div>
     `).join('');
 
@@ -46,6 +51,14 @@ async function createEstimate() {
         // select the last one
         const last = await get('/api/estimates/');
         if (last.length) selectEstimate(last[last.length - 1].id);
+    } catch (e) { toast(e.message, 'error'); }
+}
+
+async function duplicateEstimate(id) {
+    try {
+        await post(`/api/estimates/${id}/duplicate/`);
+        toast('Смета скопирована');
+        await loadEstimates();
     } catch (e) { toast(e.message, 'error'); }
 }
 

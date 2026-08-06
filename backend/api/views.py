@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -182,6 +183,30 @@ def estimate_detail_view(request, pk):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+def estimate_duplicate_view(request, pk):
+    try:
+        src = Estimate.objects.prefetch_related('lines__work_item').get(pk=pk, user=request.user)
+    except Estimate.DoesNotExist:
+        return Response({'error': 'Смета не найдена.'}, status=status.HTTP_404_NOT_FOUND)
+    
+    new_est = Estimate.objects.create(
+        user=request.user,
+        name=f'{src.name} (копия)'
+    )
+    for line in src.lines.all():
+        EstimateLine.objects.create(
+            estimate=new_est,
+            work_item=line.work_item,
+            custom_name=line.custom_name,
+            unit=line.unit,
+            price=line.price,
+            quantity=line.quantity,
+        )
+    return Response(EstimateListSerializer(new_est).data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def estimate_lines_view(request, estimate_pk):
     try:
         estimate = Estimate.objects.get(pk=estimate_pk, user=request.user)
@@ -213,6 +238,36 @@ def estimate_line_detail_view(request, estimate_pk, line_pk):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def estimate_share_view(request, pk):
+    from .models import SharedLink
+    try:
+        estimate = Estimate.objects.get(pk=pk, user=request.user)
+    except Estimate.DoesNotExist:
+        return Response({'error': 'Смета не найдена.'}, status=status.HTTP_404_NOT_FOUND)
+    
+    link, _ = SharedLink.objects.get_or_create(estimate=estimate)
+    return Response({'url': f'https://estimate.kiwiai.ru/share/{link.token}/'})
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def shared_estimate_view(request, token):
+    from .models import SharedLink
+    try:
+        link = SharedLink.objects.select_related('estimate').get(token=token)
+    except SharedLink.DoesNotExist:
+        return Response({'error': 'Ссылка недействительна.'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if link.expires_at and link.expires_at < timezone.now():
+        return Response({'error': 'Срок действия ссылки истёк.'}, status=status.HTTP_410_GONE)
+    
+    serializer = EstimateDetailSerializer(link.estimate)
+    return Response(serializer.data)
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])

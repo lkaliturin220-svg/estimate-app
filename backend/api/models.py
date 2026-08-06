@@ -1,3 +1,4 @@
+import secrets
 from django.conf import settings
 from django.db import models
 
@@ -118,3 +119,14 @@ class EstimateLine(models.Model):
     @property
     def total(self):
         return self.price * self.quantity
+
+
+class SharedLink(models.Model):
+    estimate = models.ForeignKey(Estimate, on_delete=models.CASCADE, related_name='shares')
+    token = models.CharField(max_length=64, unique=True, default=secrets.token_urlsafe)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Публичная ссылка'
+        verbose_name_plural = 'Публичные ссылки'
