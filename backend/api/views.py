@@ -257,16 +257,34 @@ def estimate_share_view(request, pk):
 @permission_classes([AllowAny])
 def shared_estimate_view(request, token):
     from .models import SharedLink
+    from django.shortcuts import render
     try:
         link = SharedLink.objects.select_related('estimate').get(token=token)
     except SharedLink.DoesNotExist:
-        return Response({'error': 'Ссылка недействительна.'}, status=status.HTTP_404_NOT_FOUND)
+        return render(request, 'share_estimate.html', {'error': 'Ссылка недействительна.', 'estimate': None, 'lines': [], 'total': 0}, status=404)
     
     if link.expires_at and link.expires_at < timezone.now():
-        return Response({'error': 'Срок действия ссылки истёк.'}, status=status.HTTP_410_GONE)
+        return render(request, 'share_estimate.html', {'error': 'Срок действия ссылки истёк.', 'estimate': None, 'lines': [], 'total': 0}, status=410)
     
-    serializer = EstimateDetailSerializer(link.estimate)
-    return Response(serializer.data)
+    lines = link.estimate.lines.select_related('work_item').all()
+    lines_data = []
+    total = 0
+    for line in lines:
+        line_total = line.total
+        total += line_total
+        lines_data.append({
+            'display_name': line.custom_name or (line.work_item.name if line.work_item else f'Строка {line.id}'),
+            'unit': line.unit,
+            'price': line.price,
+            'quantity': line.quantity,
+            'total': line_total,
+        })
+    
+    return render(request, 'share_estimate.html', {
+        'estimate': link.estimate,
+        'lines': lines_data,
+        'total': total,
+    })
 
 
 @api_view(['GET'])
