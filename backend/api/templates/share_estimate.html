@@ -27,6 +27,12 @@
 </head>
 <body>
     <div class="container">
+        {% if error %}
+        <h1>❌ {{ error }}</h1>
+        <div class="footer">
+            <a href="https://estimate.kiwiai.ru/">Перейти в Смета Стройки</a>
+        </div>
+        {% else %}
         <h1>🏗️ {{ estimate.name }}</h1>
         <div class="date">{{ estimate.updated_at|date:"d.m.Y H:i" }}</div>
         
@@ -60,6 +66,7 @@
         <div class="footer">
             Создано в <a href="https://estimate.kiwiai.ru/">Смета Стройки</a>
         </div>
+        {% endif %}
     </div>
 </body>
 </html>
